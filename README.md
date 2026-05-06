@@ -18,9 +18,9 @@ Inventio Lite es un sistema de Inventario y Ventas de proposito general desarrol
 Para instalar el Sistema Requieres Apache+PHP+MySQL o tener instalado el XAMPP/LAMPP
 
 1. Primero debes descargar este repositorio y colocarlo en tu carpeta htdocs o /var/www/ segun sea el caso.
-2. Deberas crear la base de datos llamada inventiolite en tu servidor mysql, las tablas requeridas estan en el archivo schema.sql
-3. Deberas modificar el archivo inventio-lite/core/controller/Database.php y agregar los datos de conexion a tu base de datos.
-4. Ejecutar el sistema desde http://localhost/inventio-lite/ depende del nombre que le pusiste a la carpeta del proyecto.
+2. Deberas crear la base de datos llamada warestock en tu servidor mysql, las tablas requeridas estan en el archivo schema.sql
+3. Deberas modificar el archivo warestock-master/core/controller/Database.php y agregar los datos de conexion a tu base de datos.
+4. Ejecutar el sistema desde http://localhost/warestock-master/ depende del nombre que le pusiste a la carpeta del proyecto.
 5. Los datos de usuario por default son:
     Usuario: admin
     Password: admin

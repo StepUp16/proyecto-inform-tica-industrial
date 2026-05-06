@@ -16,7 +16,7 @@ if(isset($_GET["id"]) && $_GET["id"]!=""){
         function Header() {
             $this->SetFont('Arial','B',20);
             $this->Cell(80);
-            $this->Cell(30,10,'INVENTIO LITE',0,0,'C');
+            $this->Cell(30,10,'WareStock',0,0,'C');
             $this->Ln(20);
         }
         function Footer() {

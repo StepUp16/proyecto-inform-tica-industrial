@@ -16,7 +16,7 @@
     <meta name="description" content="CoreUI - Open Source Bootstrap Admin Template">
     <meta name="author" content="Łukasz Holeczek">
     <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard">
-    <title>Inventio Lite - Dashboard</title>
+    <title>Ware Stock - Dashboard</title>
     <link rel="apple-touch-icon" sizes="57x57" href="assets/favicon/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="assets/favicon/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="assets/favicon/apple-icon-72x72.png">
@@ -57,7 +57,7 @@
 <div class="card-group d-block d-md-flex row">
 <div class="card col-md-12 p-4 mb-0">
 <div class="card-body">
-<h1>INVENTIO <b>LITE</b></h1>
+<h1>WARE <b>STOCK</b></h1>
 <br>
 <p class="text-medium-emphasis">Iniciar Sesion al Sistema</p>
 <form method="post" action="./?action=processlogin">
@@ -100,7 +100,7 @@
 <div class="sidebar-brand d-none d-md-flex">
 <div class="sidebar-brand-full" width="118" height="46" alt="CoreUI Logo">
 
-<h4><a href="./" style="color: white;">INVENTIO<b>LITE</b></a></h4>
+<h4><a href="./" style="color: white;">WARE<b>STOCK</b></a></h4>
 
 </div>
 <div class="sidebar-brand-narrow" width="46" height="46" alt="CoreUI Logo">
