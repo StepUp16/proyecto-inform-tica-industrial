@@ -2,8 +2,8 @@
  * Update 2023
  * Powered by Evilnapsis
  * **/
-create database inventiolite;
-use inventiolite;
+create database warestock;
+use warestock;
 set sql_mode='';
 
 create table user(
@@ -127,5 +127,5 @@ create table configuration(
 	kind int,
 	val varchar(255)
 );
-insert into configuration(short,name,kind,val) value("title","Titulo del Sistema",2,"Inventio Lite");
+insert into configuration(short,name,kind,val) value("title","Titulo del Sistema",2,"WareStock");
 
