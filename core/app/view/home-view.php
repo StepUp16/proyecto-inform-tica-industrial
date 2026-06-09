@@ -1,160 +1,182 @@
-	<?php
-	$found=false;
+<?php
+// 1. Lógica de Alertas de Inventario
 $products = ProductData::getAll();
 $products_array = array();
 foreach($products as $product){
-	$q=OperationData::getQYesF($product->id);	
-	if($q<=$product->inventary_min){
+  $q=OperationData::getQYesF($product->id); 
+  if($q<=$product->inventary_min){
     $products_array[]  = $product;
-
-	}
+  }
 }
-	?>
-<div class="row">
-	<div class="col-md-12">
-		<h1>Bienvenido a Inventio Lite</h1>
-</div>
-</div>
 
-                    <div class="row">
-                      <div class="col-6 col-lg-3">
-                        <div class="card">
-                          <div class="card-body p-3 d-flex align-items-center">
-                            <div class="bg-primary text-white p-3 me-3">
-                              <svg class="icon icon-xl">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-smile"></use>
-                              </svg>
-                            </div>
-                            <div>
-                              <div class="fs-6 fw-semibold text-primary"><?php echo count(ProductData::getAll());?></div>
-                              <div class="text-medium-emphasis text-uppercase fw-semibold small">PRODUCTOS</div>
-                            </div>
-                          </div>
-                          <div class="card-footer px-3 py-2"><a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center" href="./?view=products"><span class="small fw-semibold">IR A PRODUCTOS</span>
-                              <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-chevron-right"></use>
-                              </svg></a></div>
-                        </div>
-                      </div>
-                      <!-- /.col-->
-                      <div class="col-6 col-lg-3">
-                        <div class="card">
-                          <div class="card-body p-3 d-flex align-items-center">
-                            <div class="bg-info text-white p-3 me-3">
-                              <svg class="icon icon-xl">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-user"></use>
-                              </svg>
-                            </div>
-                            <div>
-                              <div class="fs-6 fw-semibold text-info"><?php echo count(PersonData::getClients());?></div>
-                              <div class="text-medium-emphasis text-uppercase fw-semibold small">CLIENTES</div>
-                            </div>
-                          </div>
-                          <div class="card-footer px-3 py-2"><a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center" href="./?view=clients"><span class="small fw-semibold">IR A CLIENTES</span>
-                              <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-chevron-right"></use>
-                              </svg></a></div>
-                        </div>
-                      </div>
-                      <!-- /.col-->
-                      <div class="col-6 col-lg-3">
-                        <div class="card">
-                          <div class="card-body p-3 d-flex align-items-center">
-                            <div class="bg-warning text-white p-3 me-3">
-                              <svg class="icon icon-xl">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-truck"></use>
-                              </svg>
-                            </div>
-                            <div>
-                              <div class="fs-6 fw-semibold text-warning"><?php echo count(PersonData::getProviders());?></div>
-                              <div class="text-medium-emphasis text-uppercase fw-semibold small">IR A PROVEEDORES</div>
-                            </div>
-                          </div>
-                          <div class="card-footer px-3 py-2"><a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center" href="./?view=providers"><span class="small fw-semibold">IR A PROVEEDORES</span>
-                              <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-chevron-right"></use>
-                              </svg></a></div>
-                        </div>
-                      </div>
-                      <div class="col-6 col-lg-3">
-                        <div class="card">
-                          <div class="card-body p-3 d-flex align-items-center">
-                            <div class="bg-danger text-white p-3 me-3">
-                              <svg class="icon icon-xl">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-bell"></use>
-                              </svg>
-                            </div>
-                            <div>
-                              <div class="fs-6 fw-semibold text-danger"><?php echo count(CategoryData::getAll());?></div>
-                              <div class="text-medium-emphasis text-uppercase fw-semibold small">Widget title</div>
-                            </div>
-                          </div>
-                          <div class="card-footer px-3 py-2"><a class="btn-block text-medium-emphasis d-flex justify-content-between align-items-center" href="./?view=categories"><span class="small fw-semibold">IR A CATEGORIAS</span>
-                              <svg class="icon">
-                                <use xlink:href="vendors/@coreui/icons/svg/free.svg#cil-chevron-right"></use>
-                              </svg></a></div>
-                        </div>
-                      </div>
-                    </div>
+// 2. Lógica para Métricas de la Agencia (Facturación Mensual)
+$con = Database::getCon();
+$mes_actual = date("m");
+$ano_actual = date("Y");
+$meta_mensual = 15000; // Meta de $15K establecida en la rúbrica
 
-<br>
-<div class="row">
-	<div class="col-md-12">
-<div class="card">
-  <div class="card-header">ALERTAS DE INVENTARIO
+// Facturación del mes
+$sql_ventas = "SELECT SUM(total - discount) as total_mes FROM sell WHERE MONTH(created_at) = '$mes_actual' AND YEAR(created_at) = '$ano_actual'";
+$query_ventas = $con->query($sql_ventas);
+$ventas_data = $query_ventas->fetch_assoc();
+$total_facturado = ($ventas_data['total_mes']) ? $ventas_data['total_mes'] : 0;
+$porcentaje_meta = ($total_facturado / $meta_mensual) * 100;
+
+// Órdenes activas en taller
+$sql_taller = "SELECT COUNT(*) as activas FROM sell WHERE estado_produccion != 'Listo para Instalacion' AND estado_produccion IS NOT NULL";
+$query_taller = $con->query($sql_taller);
+$taller_data = $query_taller->fetch_assoc();
+$ordenes_activas = $taller_data['activas'];
+?>
+
+<div class="row mb-4">
+  <div class="col-md-12">
+    <h2 class="fw-bold text-dark"><i class="bi bi-speedometer"></i> Panel de Control - Gerencia</h2>
+    <p class="text-muted">Resumen operativo y financiero del mes en curso.</p>
   </div>
-    <div class="card-body">
-
-
-
-<?php 
-
-if(count($products_array)>0){?>
-<div class="mb-3">
-	<a href="report/alerts-pdf.php" target="_blank" class="btn btn-success text-white"><i class="fa fa-download"></i> Descargar PDF</a>
 </div>
-<br><table class="table table-bordered table-hover">
-	<thead>
-		<th >Codigo</th>
-		<th>Nombre del producto</th>
-		<th>En Stock</th>
-		<th></th>
-	</thead>
-  <tbody>
-	<?php
-foreach($products as $product):
-	$q=OperationData::getQYesF($product->id);
-	?>
-	<?php if($q<=$product->inventary_min):?>
-	<tr class="<?php if($q==0){ echo "danger"; }else if($q<=$product->inventary_min/2){ echo "danger"; } else if($q<=$product->inventary_min){ echo "warning"; } ?>">
-		<td><?php echo $product->id; ?></td>
-		<td><?php echo $product->name; ?></td>
-		<td><?php echo $q; ?></td>
-		<td>
-		<?php if($q==0){ echo "<span class='label label-danger'>No hay existencias.</span>";}else if($q<=$product->inventary_min/2){ echo "<span class='label label-danger'>Quedan muy pocas existencias.</span>";} else if($q<=$product->inventary_min){ echo "<span class='label label-warning'>Quedan pocas existencias.</span>";} ?>
-		</td>
-	</tr>
-<?php endif;?>
-<?php
-endforeach;
-?>
-  </tbody>
-</table>
 
-<div class="clearfix"></div>
-
-	<?php
-}else{
-	?>
-	<div class="jumbotron">
-		<h2>No hay alertas</h2>
-		<p>Por el momento no hay alertas de inventario, estas se muestran cuando el inventario ha alcanzado el nivel minimo.</p>
-	</div>
-	<?php
-}
-
-?>
+<div class="row mb-4">
+  
+  <div class="col-6 col-lg-3">
+    <div class="card border-success shadow-sm">
+      <div class="card-body p-3 d-flex align-items-center">
+        <div class="bg-success text-white p-3 me-3 rounded">
+          <i class="bi bi-currency-dollar" style="font-size: 2rem;"></i>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold text-success">$<?php echo number_format($total_facturado, 2); ?></div>
+          <div class="text-medium-emphasis text-uppercase fw-semibold small">Ventas del Mes</div>
+        </div>
+      </div>
+      <div class="card-footer px-3 py-2 bg-light">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <span class="small fw-semibold text-muted">Meta: $15K</span>
+          <span class="small fw-bold text-dark"><?php echo number_format($porcentaje_meta, 1); ?>%</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar bg-success" role="progressbar" style="width: <?php echo $porcentaje_meta; ?>%;"></div>
+        </div>
+      </div>
     </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="card border-primary shadow-sm">
+      <div class="card-body p-3 d-flex align-items-center">
+        <div class="bg-primary text-white p-3 me-3 rounded">
+          <i class="bi bi-tools" style="font-size: 2rem;"></i>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold text-primary"><?php echo $ordenes_activas; ?></div>
+          <div class="text-medium-emphasis text-uppercase fw-semibold small">En Producción</div>
+        </div>
+      </div>
+      <div class="card-footer px-3 py-2 bg-light">
+        <a class="btn-block text-primary d-flex justify-content-between align-items-center text-decoration-none" href="./?view=taller">
+          <span class="small fw-bold">VER TALLER</span>
+          <i class="bi bi-arrow-right-circle-fill"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="card border-danger shadow-sm">
+      <div class="card-body p-3 d-flex align-items-center">
+        <div class="bg-danger text-white p-3 me-3 rounded">
+          <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold text-danger"><?php echo count($products_array); ?></div>
+          <div class="text-medium-emphasis text-uppercase fw-semibold small">Alertas de Stock</div>
+        </div>
+      </div>
+      <div class="card-footer px-3 py-2 bg-light">
+        <a class="btn-block text-danger d-flex justify-content-between align-items-center text-decoration-none" href="#alertas">
+          <span class="small fw-bold">VER ALERTAS</span>
+          <i class="bi bi-arrow-down-circle-fill"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-6 col-lg-3">
+    <div class="card border-warning shadow-sm">
+      <div class="card-body p-3 d-flex align-items-center">
+        <div class="bg-warning text-dark p-3 me-3 rounded">
+          <i class="bi bi-truck" style="font-size: 2rem;"></i>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold text-dark"><?php echo count(PersonData::getProviders());?></div>
+          <div class="text-medium-emphasis text-uppercase fw-semibold small">Proveedores</div>
+        </div>
+      </div>
+      <div class="card-footer px-3 py-2 bg-light">
+        <a class="btn-block text-warning d-flex justify-content-between align-items-center text-decoration-none text-dark" href="./?view=providers">
+          <span class="small fw-bold">CONTACTAR PROVEEDOR</span>
+          <i class="bi bi-arrow-right-circle-fill"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
 </div>
-	</div>
+
+<div class="row" id="alertas">
+  <div class="col-md-12">
+    <div class="card shadow-sm border-danger">
+      <div class="card-header bg-danger text-white fw-bold">
+        <i class="bi bi-bell-fill"></i> ALERTAS CRÍTICAS DE INVENTARIO (MATERIA PRIMA)
+      </div>
+      <div class="card-body p-0">
+        <?php if(count($products_array)>0){ ?>
+        
+        <div class="p-3 bg-light border-bottom d-flex justify-content-end">
+          <a href="report/alerts-pdf.php" target="_blank" class="btn btn-outline-danger btn-sm fw-bold"><i class="bi bi-file-earmark-pdf"></i> Generar Orden de Compra (PDF)</a>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="table table-hover mb-0 align-middle text-center">
+            <thead class="bg-light">
+              <tr>
+                <th>Código</th>
+                <th class="text-start">Insumo / Producto</th>
+                <th>Stock Actual</th>
+                <th>Mínimo Requerido</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+            <?php foreach($products as $product):
+              $q = OperationData::getQYesF($product->id);
+              if($q <= $product->inventary_min):
+            ?>
+              <tr class="<?php echo ($q==0) ? 'table-danger' : 'table-warning'; ?>">
+                <td class="fw-bold text-muted"><?php echo $product->barcode; ?></td>
+                <td class="text-start fw-bold"><?php echo $product->name; ?></td>
+                <td class="fs-5 fw-bold <?php echo ($q==0) ? 'text-danger' : 'text-warning text-dark'; ?>"><?php echo $q; ?></td>
+                <td class="text-muted"><?php echo $product->inventary_min; ?></td>
+                <td>
+                  <?php if($q==0){ ?>
+                    <span class='badge bg-danger p-2'><i class="bi bi-x-circle"></i> Agotado por completo</span>
+                  <?php } else { ?>
+                    <span class='badge bg-warning text-dark p-2'><i class="bi bi-exclamation-circle"></i> Bajo nivel (Comprar pronto)</span>
+                  <?php } ?>
+                </td>
+              </tr>
+            <?php endif; endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+        <?php } else { ?>
+        <div class="p-5 text-center bg-light">
+          <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+          <h4 class="mt-3 text-dark">Inventario Saludable</h4>
+          <p class="text-muted">Por el momento, no hay escasez de materia prima ni productos terminados. La bodega está abastecida por encima de los niveles mínimos.</p>
+        </div>
+        <?php } ?>
+      </div>
+    </div>
+  </div>
 </div>
