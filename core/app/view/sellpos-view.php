@@ -1,47 +1,75 @@
 <div class="row">
-	<div class="col-md-12">
-    <div class="card mb-4">
+  <div class="col-md-12">
+    <div class="card mb-3 shadow-sm">
       <div class="card-body">
-        <h1>Punto de Venta</h1>
-        <p><b>Buscar producto por nombre o por código:</b></p>
+        <h2 class="text-primary"><i class="bi bi-cart-plus"></i> Nueva Orden de Producción</h2>
+        <p class="text-muted"><b>Buscar material o servicio por nombre o por código:</b></p>
         <form id="searchp" onsubmit="return false;">
           <input type="hidden" name="view" value="sellpos">
           <div class="row">
             <div class="col-md-10">
-              <input type="text" id="product_code" name="product" class="form-control" autocomplete="off" placeholder="Escriba el nombre o código del producto...">
+              <input type="text" id="product_code" name="product" class="form-control form-control-lg" autocomplete="off" placeholder="Escriba el nombre o código del producto/servicio...">
             </div>
             <div class="col-md-2">
-              <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search"></i> Buscar</button>
+              <button type="submit" class="btn btn-primary btn-lg w-100"><i class="bi bi-search"></i> Buscar</button>
             </div>
           </div>
         </form>
       </div>
     </div>
-	</div>
+
+    <div class="card mb-4 border-warning shadow-sm">
+      <div class="card-header bg-warning text-dark fw-bold">
+        <i class="bi bi-exclamation-triangle-fill"></i> DATOS DE PRODUCCIÓN (Obligatorios para el Taller)
+      </div>
+      <div class="card-body bg-light">
+        <div class="row">
+          <div class="col-md-4">
+            <label class="fw-bold form-label">Prioridad de Fabricación</label>
+            <select id="prod_prioridad" name="prioridad" class="form-select">
+              <option value="Baja">Baja (Normal)</option>
+              <option value="Media" selected>Media (Estándar)</option>
+              <option value="Alta">Alta (Urgente)</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="fw-bold form-label">Fecha de Entrega Acordada</label>
+            <input type="date" id="prod_fecha_entrega" name="fecha_entrega" class="form-control">
+          </div>
+          <div class="col-md-4">
+            <label class="fw-bold form-label">Enlace del Diseño Aprobado</label>
+            <input type="url" id="prod_diseno_url" name="diseno_url" class="form-control" placeholder="Ej: Link de Drive, Canva, etc.">
+          </div>
+        </div>
+        <small class="text-muted mt-2 d-block"><i class="bi bi-info-circle"></i> Nota: Llene estos datos antes de procesar la venta. Se enviarán directamente a las pantallas de los operarios.</small>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="row">
-  <div class="col-lg-9">
-    <div class="card">
-      <div class="card-header">PRODUCTOS</div>
+  <div class="col-lg-8">
+    <div class="card shadow-sm">
+      <div class="card-header bg-dark text-white"><i class="bi bi-box-seam"></i> CATÁLOGO DE PRODUCTOS</div>
       <div class="card-body">
         <div id="show_search_results" class="row">
-          <!-- Aquí se cargarán los productos en cuadrícula -->
-          <div class="col-md-12 text-center text-muted">
-            <p><i class="bi bi-cart4" style="font-size: 3rem;"></i></p>
-            <p>Realice una búsqueda para comenzar.</p>
+          <div class="col-md-12 text-center text-muted py-5">
+            <p><i class="bi bi-cart4" style="font-size: 4rem; color: #e0e0e0;"></i></p>
+            <h4>Realice una búsqueda para comenzar a armar la orden.</h4>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="col-lg-3">
+  <div class="col-lg-4">
     <div id="cart_summary">
-      <!-- Aquí se cargará el resumen del carrito via AJAX -->
-      <div class="card">
-        <div class="card-header">RESUMEN</div>
-        <div class="card-body text-center text-muted">
-          <p>Cargando carrito...</p>
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white fw-bold"><i class="bi bi-receipt"></i> RESUMEN DE ORDEN</div>
+        <div class="card-body text-center text-muted py-5">
+          <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-3">Sincronizando carrito...</p>
         </div>
       </div>
     </div>
@@ -53,11 +81,11 @@ $(document).ready(function(){
   // Cargar carrito al iniciar
   updateCart();
 
-	$("#searchp").on("submit",function(e){
-		e.preventDefault();
-		searchProducts();
+  $("#searchp").on("submit",function(e){
+    e.preventDefault();
+    searchProducts();
     return false;
-	});
+  });
 
   var typingTimer;
   var doneTypingInterval = 500;
@@ -73,15 +101,15 @@ $(document).ready(function(){
     var q = $("#product_code").val();
     if(q==""){ return; }
     $.get("./?action=searchproductpos", {product: q}, function(data){
-			$("#show_search_results").html(data);
-		});
+      $("#show_search_results").html(data);
+    });
   }
 
   function addToCart(product_id){
     var q = $("#q-"+product_id).val();
     $.post("./?action=addtocartpos", {product_id: product_id, q: q}, function(data){
       if(data.trim() == "error_insufficient_stock"){
-        Swal.fire('Atención', 'No hay suficiente stock disponible para agregar esa cantidad.', 'warning');
+        Swal.fire('Atención', 'No hay suficiente stock en inventario para agregar esa cantidad.', 'warning');
       } else {
         updateCart();
       }

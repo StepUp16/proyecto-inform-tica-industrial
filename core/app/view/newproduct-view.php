@@ -1,102 +1,71 @@
-    <?php 
-$categories = CategoryData::getAll();
-    ?>
 <div class="row">
-	<div class="col-md-12">
-	<h1>Nuevo Producto</h1>
+  <div class="col-md-12">
+    <h2 class="text-primary fw-bold"><i class="bi bi-box-seam"></i> Registrar Nuevo Insumo / Producto</h2>
+    <p class="text-muted">Agregue materia prima (ej. tazas, rollos de vinil) o productos terminados. Defina su stock mínimo para activar las alertas en bodega.</p>
+    
+    <div class="card shadow-sm border-primary">
+      <div class="card-header bg-dark text-white fw-bold">DATOS DEL REGISTRO</div>
+      <div class="card-body bg-light">
+        <form method="post" enctype="multipart/form-data" id="addproduct" action="index.php?view=addproduct">
+          
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Tipo de Registro*</label>
+              <select name="es_materia_prima" class="form-select border-primary" required>
+                <option value="1">Materia Prima / Insumo (Para producir)</option>
+                <option value="0">Producto Terminado (Para vender directo)</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Código*</label>
+              <input type="text" name="barcode" id="product_code" class="form-control" placeholder="Ej: MAT-001" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Nombre del Insumo/Producto*</label>
+              <input type="text" name="name" class="form-control" placeholder="Ej: Taza Blanca 11oz" required>
+            </div>
+          </div>
 
-<div class="card">
-  <div class="card-header">
-    NUEVO PRODUCTO
-  </div>
-    <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-bold text-danger">Costo (Precio de Compra)*</label>
+              <input type="number" step="0.01" name="price_in" class="form-control border-danger" placeholder="$ 0.00" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold text-success">Precio de Venta</label>
+              <input type="number" step="0.01" name="price_out" class="form-control border-success" placeholder="$ 0.00 (Dejar 0 si es solo insumo)" value="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Unidad de Medida*</label>
+              <input type="text" name="unit" class="form-control" placeholder="Ej: Unidades, Metros, Mililitros" required>
+            </div>
+          </div>
 
+          <div class="row mb-3">
+            <div class="col-md-4">
+              <label class="form-label fw-bold text-warning">Stock Mínimo (Alerta)*</label>
+              <input type="number" name="inventary_min" class="form-control border-warning" placeholder="Ej: 10" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold text-info">Inventario Inicial</label>
+              <input type="number" name="q" class="form-control border-info" placeholder="Cantidad actual en bodega" value="0">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-bold">Imagen (Opcional)</label>
+              <input type="file" name="image" id="image" class="form-control">
+            </div>
+          </div>
 
-		<form class="form-horizontal" method="post" enctype="multipart/form-data" id="addproduct" action="index.php?view=addproduct" role="form">
+          <div class="mb-4">
+            <label class="form-label fw-bold">Descripción / Detalles adicionales</label>
+            <textarea name="description" class="form-control" rows="2" placeholder="Marca del insumo, proveedor sugerido, especificaciones técnicas..."></textarea>
+          </div>
 
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Imagen</label>
-    <div class="col-md-6">
-      <input type="file" name="image" id="image" placeholder="">
+          <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm"><i class="bi bi-save"></i> Guardar Registro en Inventario</button>
+        </form>
+      </div>
     </div>
   </div>
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Codigo de Barras*</label>
-    <div class="col-md-6">
-      <input type="text" name="barcode" id="product_code" class="form-control" id="barcode" placeholder="Codigo de Barras del Producto">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Nombre*</label>
-    <div class="col-md-6">
-      <input type="text" name="name" required class="form-control" id="name" placeholder="Nombre del Producto">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Categoria</label>
-    <div class="col-md-6">
-    <select name="category_id" class="form-control">
-    <option value="">-- NINGUNA --</option>
-    <?php foreach($categories as $category):?>
-      <option value="<?php echo $category->id;?>"><?php echo $category->name;?></option>
-    <?php endforeach;?>
-      </select>    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Descripcion</label>
-    <div class="col-md-6">
-      <textarea name="description" class="form-control" id="description" placeholder="Descripcion del Producto"></textarea>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Precio de Entrada*</label>
-    <div class="col-md-6">
-      <input type="text" name="price_in" required class="form-control" id="price_in" placeholder="Precio de entrada">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Precio de Salida*</label>
-    <div class="col-md-6">
-      <input type="text" name="price_out" required class="form-control" id="price_out" placeholder="Precio de salida">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Unidad*</label>
-    <div class="col-md-6">
-      <input type="text" name="unit" required class="form-control" id="unit" placeholder="Unidad del Producto">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Presentacion</label>
-    <div class="col-md-6">
-      <input type="text" name="presentation" class="form-control" id="inputEmail1" placeholder="Presentacion del Producto">
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Minima en inventario:</label>
-    <div class="col-md-6">
-      <input type="text" name="inventary_min" class="form-control" id="inputEmail1" placeholder="Minima en Inventario (Default 10)">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="inputEmail1" class="col-lg-2 control-label">Inventario inicial:</label>
-    <div class="col-md-6">
-      <input type="text" name="q" class="form-control" id="inputEmail1" placeholder="Inventario inicial">
-    </div>
-  </div>
-
-  <div class="form-group">
-    <div class="col-lg-offset-2 col-lg-10">
-      <button type="submit" class="btn btn-primary">Agregar Producto</button>
-    </div>
-  </div>
-</form>
-    </div>
-</div>
-
-	</div>
 </div>
 
 <script>
@@ -104,10 +73,7 @@ $categories = CategoryData::getAll();
     $("#product_code").keydown(function(e){
         if(e.which==17 || e.which==74 ){
             e.preventDefault();
-        }else{
-            console.log(e.which);
         }
     })
-});
-
+  });
 </script>
