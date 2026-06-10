@@ -5,69 +5,54 @@ Core::$root="../";
 
 require('../fpdf/fpdf.php');
 
-class PDF extends FPDF
-{
-// Cabecera de página
-function Header()
-{
-    // Logo
-    //$this->Image('logo.png',10,8,33);
-    // Arial bold 15
-    $this->SetFont('Arial','B',20);
-    // Movernos a la derecha
-    $this->Cell(80);
-    // Título
-    $this->Cell(30,10,'WareStock',0,0,'C');
-    // Salto de línea
-    $this->Ln(20);
-}
+class PDF extends FPDF {
+    function Header() {
+        $this->SetFont('Arial','B',20);
+        $this->SetTextColor(33, 37, 41);
+        $this->Cell(0,10,'CATALOGO DE INSUMOS Y SERVICIOS',0,1,'C');
+        
+        $this->SetFont('Arial','I',12);
+        $this->SetTextColor(108, 117, 125);
+        $this->Cell(0,6,'Agencia de Publicidad - WareStock',0,1,'C');
+        $this->Ln(10);
 
-// Pie de página
-function Footer()
-{
-    // Posición: a 1,5 cm del final
-    $this->SetY(-15);
-    // Arial italic 8
-    $this->SetFont('Arial','I',8);
-    // Número de página
-    $this->Cell(0,10,'Pagina '.$this->PageNo().'/{nb}',0,0,'C');
-}
+        // Cabecera de la tabla
+        $this->SetFillColor(52, 58, 64);
+        $this->SetTextColor(255, 255, 255);
+        $this->SetFont('Arial','B',10);
+        $this->Cell(30, 8, utf8_decode('Código'), 1, 0, 'C', true);
+        $this->Cell(80, 8, 'Nombre del Articulo', 1, 0, 'C', true);
+        $this->Cell(30, 8, 'Tipo', 1, 0, 'C', true);
+        $this->Cell(25, 8, 'Precio U.', 1, 0, 'C', true);
+        $this->Cell(25, 8, 'Activo', 1, 1, 'C', true);
+    }
+    function Footer() {
+        $this->SetY(-15);
+        $this->SetFont('Arial','I',8);
+        $this->SetTextColor(150, 150, 150);
+        $this->Cell(0,10,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'C');
+    }
 }
 
 $products = ProductData::getAll();
 
-// Creación del objeto de la clase heredada
 $pdf = new PDF();
 $pdf->AliasNbPages();
 $pdf->AddPage();
-$pdf->SetFont('Arial','B',12);
-$pdf->Cell(0,10,'LISTADO DE PRODUCTOS',0,1,'C');
-$pdf->Ln(5);
-
-// Cabecera de la tabla
-$pdf->SetFont('Arial','B',10);
-$pdf->SetFillColor(232,232,232);
-$pdf->Cell(20,10,'ID',1,0,'C',1);
-$pdf->Cell(80,10,'Nombre',1,0,'C',1);
-$pdf->Cell(30,10,'Precio',1,0,'C',1);
-$pdf->Cell(30,10,'Categoria',1,0,'C',1);
-$pdf->Cell(30,10,'Activo',1,1,'C',1);
-
+$pdf->SetTextColor(0,0,0);
 $pdf->SetFont('Arial','',10);
 
 foreach($products as $product){
-    $pdf->Cell(20,10,$product->id,1,0,'C');
-    $pdf->Cell(80,10,utf8_decode($product->name),1,0,'L');
-    $pdf->Cell(30,10,"$ ".number_format($product->price_out,2),1,0,'R');
+    $pdf->Cell(30, 8, $product->barcode, 1, 0, 'C');
+    $pdf->Cell(80, 8, " ".utf8_decode($product->name), 1, 0, 'L');
     
-    $category = "---";
-    if($product->category_id!=null){
-        $category = $product->getCategory()->name;
-    }
-    $pdf->Cell(30,10,utf8_decode($category),1,0,'C');
+    $tipo = ($product->es_materia_prima == 1) ? 'Insumo' : 'Servicio/Final';
+    $pdf->Cell(30, 8, $tipo, 1, 0, 'C');
+    
+    $pdf->Cell(25, 8, "$ ".number_format($product->price_out,2), 1, 0, 'R');
     
     $active = $product->is_active ? "Si" : "No";
-    $pdf->Cell(30,10,$active,1,1,'C');
+    $pdf->Cell(25, 8, $active, 1, 1, 'C');
 }
 
 $pdf->Output();
