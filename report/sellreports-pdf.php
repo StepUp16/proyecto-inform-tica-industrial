@@ -5,31 +5,31 @@ Core::$root="../";
 
 require('../fpdf/fpdf.php');
 
-class PDF extends FPDF
-{
-function Header()
-{
-    $this->SetFont('Arial','B',20);
-    $this->Cell(80);
-    $this->Cell(30,10,'WareStock',0,0,'C');
-    $this->Ln(20);
-}
-
-function Footer()
-{
-    $this->SetY(-15);
-    $this->SetFont('Arial','I',8);
-    $this->Cell(0,10,'Pagina '.$this->PageNo().'/{nb}',0,0,'C');
-}
+class PDF extends FPDF {
+    function Header() {
+        $this->SetFont('Arial','B',20);
+        $this->SetTextColor(33, 37, 41);
+        $this->Cell(0,10,'REPORTE FINANCIERO DE VENTAS',0,1,'C');
+        
+        $this->SetFont('Arial','I',12);
+        $this->SetTextColor(108, 117, 125);
+        $this->Cell(0,6,'Agencia de Publicidad - WareStock',0,1,'C');
+        $this->Ln(5);
+    }
+    function Footer() {
+        $this->SetY(-15);
+        $this->SetFont('Arial','I',8);
+        $this->SetTextColor(150, 150, 150);
+        $this->Cell(0,10,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'C');
+    }
 }
 
 $operations = array();
 
 if(isset($_GET["sd"]) && isset($_GET["ed"]) && $_GET["sd"]!="" && $_GET["ed"]!=""){
-    if($_GET["client_id"]==""){
+    if(isset($_GET["client_id"]) && $_GET["client_id"]==""){
         $operations = SellData::getAllByDateOp($_GET["sd"],$_GET["ed"],2);
-    }
-    else{
+    } else if(isset($_GET["client_id"])){
         $operations = SellData::getAllByDateBCOp($_GET["client_id"],$_GET["sd"],$_GET["ed"],2);
     } 
 }
@@ -37,47 +37,46 @@ if(isset($_GET["sd"]) && isset($_GET["ed"]) && $_GET["sd"]!="" && $_GET["ed"]!="
 $pdf = new PDF();
 $pdf->AliasNbPages();
 $pdf->AddPage();
-$pdf->SetFont('Arial','B',12);
-$pdf->Cell(0,10,'REPORTE DE VENTAS',0,1,'C');
+$pdf->SetTextColor(0,0,0);
 
 if(isset($_GET["sd"]) && isset($_GET["ed"])){
-    $pdf->SetFont('Arial','',10);
-    $pdf->Cell(0,10,'Rango de fechas: '.$_GET["sd"].' al '.$_GET["ed"],0,1,'C');
-}
-
-if($_GET["client_id"]!=""){
-    $client = PersonData::getById($_GET["client_id"]);
-    $pdf->Cell(0,10,'Cliente: '.$client->name." ".$client->lastname,0,1,'C');
+    $pdf->SetFont('Arial','B',10);
+    $pdf->Cell(0,8,'Periodo: '.$_GET["sd"].' al '.$_GET["ed"],0,1,'C');
 }
 
 $pdf->Ln(5);
 
 if(count($operations)>0){
+    $pdf->SetFillColor(52, 58, 64);
+    $pdf->SetTextColor(255, 255, 255);
     $pdf->SetFont('Arial','B',10);
-    $pdf->SetFillColor(232,232,232);
-    $pdf->Cell(20,10,'ID',1,0,'C',1);
-    $pdf->Cell(40,10,'Subtotal',1,0,'C',1);
-    $pdf->Cell(40,10,'Descuento',1,0,'C',1);
-    $pdf->Cell(40,10,'Total',1,0,'C',1);
-    $pdf->Cell(50,10,'Fecha',1,1,'C',1);
+    $pdf->Cell(25,8,'No. Orden',1,0,'C',true);
+    $pdf->Cell(45,8,'Fecha y Hora',1,0,'C',true);
+    $pdf->Cell(40,8,'Subtotal',1,0,'C',true);
+    $pdf->Cell(40,8,'Descuento',1,0,'C',true);
+    $pdf->Cell(40,8,'Total Cobrado',1,1,'C',true);
 
+    $pdf->SetTextColor(0,0,0);
     $pdf->SetFont('Arial','',10);
     $supertotal = 0;
+    
     foreach($operations as $operation){
-        $pdf->Cell(20,10,$operation->id,1,0,'C');
-        $pdf->Cell(40,10,"$ ".number_format($operation->total,2),1,0,'R');
-        $pdf->Cell(40,10,"$ ".number_format($operation->discount,2),1,0,'R');
-        $total = $operation->total-$operation->discount;
-        $pdf->Cell(40,10,"$ ".number_format($total,2),1,0,'R');
-        $pdf->Cell(50,10,$operation->created_at,1,1,'C');
+        $pdf->Cell(25,8,'ORD-'.$operation->id,1,0,'C');
+        $pdf->Cell(45,8,date("d/m/Y H:i", strtotime($operation->created_at)),1,0,'C');
+        $pdf->Cell(40,8,"$ ".number_format($operation->total,2),1,0,'R');
+        $pdf->Cell(40,8,"$ ".number_format($operation->discount,2),1,0,'R');
+        $total = $operation->total - $operation->discount;
+        $pdf->Cell(40,8,"$ ".number_format($total,2),1,1,'R');
         $supertotal += $total;
     }
     $pdf->Ln(10);
     $pdf->SetFont('Arial','B',14);
-    $pdf->Cell(190,10,'TOTAL DE VENTAS: $ '.number_format($supertotal,2),0,1,'R');
+    $pdf->SetFillColor(212, 237, 218);
+    $pdf->Cell(130,10,'',0,0); // Espacio en blanco
+    $pdf->Cell(60,10,'TOTAL: $ '.number_format($supertotal,2),1,1,'R',true);
 } else {
     $pdf->SetFont('Arial','I',12);
-    $pdf->Cell(0,10,'No se encontraron resultados para el rango y cliente seleccionados.',0,1,'C');
+    $pdf->Cell(0,10,'No se encontraron ventas para el rango y cliente seleccionados.',0,1,'C');
 }
 
 $pdf->Output();
