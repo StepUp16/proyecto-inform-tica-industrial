@@ -1,131 +1,138 @@
-/**
- * Update 2023
- * Powered by Evilnapsis
- * **/
-create database warestock;
-use warestock;
-set sql_mode='';
+-- 1. Crear la base de datos desde cero
+CREATE DATABASE IF NOT EXISTS warestock;
+USE warestock;
 
-create table user(
-	id int not null auto_increment primary key,
-	name varchar(50),
-	lastname varchar(50),
-	username varchar(50),
-	email varchar(255),
-	password varchar(60),
-	image varchar(255),
-	is_active boolean not null default 1,
-	is_admin boolean not null default 0,
-	created_at datetime
+-- 2. Tabla de Usuarios
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50),
+    lastname VARCHAR(50),
+    username VARCHAR(50),
+    email VARCHAR(255),
+    password VARCHAR(60),
+    image VARCHAR(255),
+    is_active BOOLEAN DEFAULT 1,
+    is_admin BOOLEAN DEFAULT 0,
+    created_at DATETIME
 );
 
-insert into user(name,lastname,email,password,is_active,is_admin,created_at) value ("Administrador", "","admin","90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad",1,1,NOW());
+-- Insertar el usuario Administrador por defecto (Contraseña: admin)
+INSERT INTO user (name, lastname, username, email, password, is_active, is_admin, created_at) 
+VALUES ('Administrador', 'Sistema', 'admin', 'admin@warestock.com', '90b9aa7e25f80cf4f64e990b78a9fc5ebd6cecad', 1, 1, NOW());
 
-create table category(
-	id int not null auto_increment primary key,
-	image varchar(255),
-	name varchar(50),
-	description text,
-	created_at datetime
+-- 3. Tabla de Categorías
+CREATE TABLE category (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    image VARCHAR(255),
+    name VARCHAR(50),
+    description TEXT,
+    created_at DATETIME
 );
 
-create table product(
-	id int not null auto_increment primary key,
-	image varchar(255),
-	barcode varchar(50),
-	name varchar(50),
-	description text,
-	inventary_min int default 10,
-	price_in float,
-	price_out float,
-	unit varchar(255),
-	presentation varchar(255),
-	user_id int,
-	category_id int,
-	created_at datetime,
-	is_active boolean default 1,
-	foreign key (category_id) references category(id),
-	foreign key (user_id) references user(id)
+-- 4. Tabla de Productos e Insumos
+CREATE TABLE product (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    image VARCHAR(255),
+    barcode VARCHAR(50),
+    name VARCHAR(50),
+    description TEXT,
+    inventary_min INT DEFAULT 10,
+    price_in FLOAT,
+    price_out FLOAT,
+    unit VARCHAR(255),
+    presentation VARCHAR(255),
+    user_id INT,
+    category_id INT,
+    created_at DATETIME,
+    is_active BOOLEAN DEFAULT 1,
+    es_materia_prima BOOLEAN DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (category_id) REFERENCES category(id)
 );
 
-/*
-person kind
-1.- Client
-2.- Provider
-*/
-create table person(
-	id int not null auto_increment primary key,
-	image varchar(255),
-	name varchar(255),
-	lastname varchar(50),
-	company varchar(50),
-	address1 varchar(50),
-	address2 varchar(50),
-	phone1 varchar(50),
-	phone2 varchar(50),
-	email1 varchar(50),
-	email2 varchar(50),
-	kind int,
-	created_at datetime
+-- 5. Tabla de Personas
+CREATE TABLE person (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    image VARCHAR(255),
+    name VARCHAR(255),
+    lastname VARCHAR(50),
+    company VARCHAR(50),
+    address1 VARCHAR(50),
+    address2 VARCHAR(50),
+    phone1 VARCHAR(50),
+    phone2 VARCHAR(50),
+    email1 VARCHAR(50),
+    email2 VARCHAR(50),
+    kind INT, 
+    created_at DATETIME
 );
 
+-- 6. Tipos de Operación
+CREATE TABLE operation_type (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+);
+INSERT INTO operation_type (name) VALUES ('entrada'), ('salida');
 
-create table operation_type(
-	id int not null auto_increment primary key,
-	name varchar(50)
+-- 7. Tabla de Cajas
+CREATE TABLE box (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    created_at DATETIME
 );
 
-insert into operation_type (name) value ("entrada");
-insert into operation_type (name) value ("salida");
-
-create table box(
-	id int not null auto_increment primary key,
-	created_at datetime
+-- 8. Tabla de Órdenes y Ventas
+CREATE TABLE sell (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    person_id INT,
+    user_id INT,
+    operation_type_id INT DEFAULT 2,
+    box_id INT,
+    total FLOAT,
+    cash FLOAT,
+    discount FLOAT,
+    estado_produccion VARCHAR(50) DEFAULT 'Pendiente',
+    prioridad VARCHAR(20) DEFAULT 'Media',
+    fecha_entrega DATE NULL,
+    diseno_url TEXT,
+    created_at DATETIME,
+    FOREIGN KEY (person_id) REFERENCES person(id),
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    FOREIGN KEY (box_id) REFERENCES box(id)
 );
 
-
-create table sell(
-	id int not null auto_increment primary key,
-	person_id int ,
-	user_id int ,
-	operation_type_id int default 2,
-	box_id int,
-
-	total double,
-	cash double,
-	discount double,
-
-	foreign key (box_id) references box(id),
-	foreign key (operation_type_id) references operation_type(id),
-	foreign key (user_id) references user(id),
-	foreign key (person_id) references person(id),
-	created_at datetime
+-- 9. Tabla de Entradas y Salidas de Inventario
+CREATE TABLE operation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    q FLOAT,
+    operation_type_id INT,
+    sell_id INT,
+    created_at DATETIME,
+    FOREIGN KEY (product_id) REFERENCES product(id),
+    FOREIGN KEY (operation_type_id) REFERENCES operation_type(id),
+    FOREIGN KEY (sell_id) REFERENCES sell(id) ON DELETE CASCADE
 );
 
-create table operation(
-	id int not null auto_increment primary key,
-	product_id int,
-	q float,
-	operation_type_id int,
-	sell_id int,
-	created_at datetime,
-	foreign key (product_id) references product(id),
-	foreign key (operation_type_id) references operation_type(id),
-	foreign key (sell_id) references sell(id)
+-- 10. Tabla de Recetas
+CREATE TABLE product_recipe (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_parent_id INT,
+    material_id INT,
+    quantity_to_discount FLOAT,
+    FOREIGN KEY (product_parent_id) REFERENCES product(id) ON DELETE CASCADE,
+    FOREIGN KEY (material_id) REFERENCES product(id) ON DELETE CASCADE
 );
 
-/*
-configuration kind
-1.- Boolean
-2.- Text
-3.- Number
-*/
-create table configuration(
-	id int not null auto_increment primary key,
-	short varchar(255) unique,
-	name varchar(255) unique,
-	kind int,
-	val varchar(255)
-);
-insert into configuration(short,name,kind,val) value("title","Titulo del Sistema",2,"WareStock");
+-- Datos de prueba
+INSERT INTO product (barcode, name, price_in, price_out, unit, inventary_min, es_materia_prima, user_id, created_at) VALUES 
+('PROD-001', 'Taza Sublimada (Servicio Completo)', 3.50, 8.00, 'Unidad', 5, 0, 1, NOW()),
+('MAT-001', 'Taza Blanca en Blanco 11oz', 1.50, 0.00, 'Unidad', 10, 1, 1, NOW()),
+('MAT-002', 'Tinta de Sublimacion (Todos los colores)', 0.25, 0.00, 'ml', 50, 1, 1, NOW());
 
+INSERT INTO operation (product_id, q, operation_type_id, created_at) VALUES 
+(2, 50, 1, NOW()),
+(3, 500, 1, NOW());
+
+INSERT INTO product_recipe (product_parent_id, material_id, quantity_to_discount) VALUES 
+(1, 2, 1.0),
+(1, 3, 3.0);
