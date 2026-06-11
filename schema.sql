@@ -3,18 +3,17 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 10-06-2026 a las 20:24:57
+-- Tiempo de generación: 11-06-2026 a las 19:11:26
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
-
-CREATE DATABASE IF NOT EXISTS warestock;
-USE warestock;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
+create database warestock;
+use warestock;
+set sql_mode='';
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -173,15 +172,15 @@ CREATE TABLE `person` (
 -- Volcado de datos para la tabla `person`
 --
 
-INSERT INTO `person` (`id`, `image`, `name`, `lastname`, `company`, `address1`, `phone1`, `email1`, `kind`, `created_at`) VALUES
-(1, NULL, 'Carlos', 'Mendoza', 'Restaurante La Parrilla', 'Av. Principal 123, Centro', '555-0101', 'carlos@laparrilla.com', 1, '2026-06-10 11:33:18'),
-(2, NULL, 'María Fernanda', 'López', 'Boutique Eleganza', 'Calle Real 456, Plaza Mayor', '555-0202', 'maria@eleganza.com', 1, '2026-06-10 11:33:18'),
-(3, NULL, 'Roberto', 'García', 'TechSolutions S.A.', 'Blvd. Tecnológico 789, Of. 301', '555-0303', 'roberto@techsolutions.com', 1, '2026-06-10 11:33:18'),
-(4, NULL, 'Proveedora', 'Gráfica del Sur', 'Gráfica del Sur S.A. de C.V.', 'Av. Industrias 500, Zona Industrial', '555-0404', 'ventas@graficadelsur.com', 2, '2026-06-10 11:33:18'),
-(5, NULL, 'Distribuidora', 'Vinilos y Más', 'Vinilos y Más S.A.', 'Calle del Plástico 200, Col. Industrial', '555-0505', 'pedidos@vinilosymas.com', 2, '2026-06-10 11:33:18'),
-(6, NULL, 'Suministros', 'Tinta y Color', 'Tinta y Color S.A.', 'Blvd. Químico 345, Parque Industrial', '555-0606', 'ventas@tintaycolor.com', 2, '2026-06-10 11:33:18'),
-(7, NULL, 'Grupo', 'Acrílicos del Norte', 'Acrílicos del Norte S.A.', 'Av. del Vidrio 678, Col. Industrial', '555-0707', 'info@acrilicosnorte.com', 2, '2026-06-10 11:33:18'),
-(8, NULL, 'Comercial', 'LED y Letreros', 'LED y Letreros S.A.', 'Calle Eléctrica 123, Zona Industrial', '555-0808', 'ventas@ledletreros.com', 2, '2026-06-10 11:33:18');
+INSERT INTO `person` (`id`, `image`, `name`, `lastname`, `company`, `address1`, `address2`, `phone1`, `phone2`, `email1`, `email2`, `kind`, `created_at`) VALUES
+(1, NULL, 'Carlos', 'Mendoza', 'Restaurante La Parrilla', 'Av. Principal 123, Centro', NULL, '555-0101', NULL, 'carlos@laparrilla.com', NULL, 1, '2026-06-10 11:33:18'),
+(2, NULL, 'María Fernanda', 'López', 'Boutique Eleganza', 'Calle Real 456, Plaza Mayor', NULL, '555-0202', NULL, 'maria@eleganza.com', NULL, 1, '2026-06-10 11:33:18'),
+(3, NULL, 'Roberto', 'García', 'TechSolutions S.A.', 'Blvd. Tecnológico 789, Of. 301', NULL, '555-0303', NULL, 'roberto@techsolutions.com', NULL, 1, '2026-06-10 11:33:18'),
+(4, NULL, 'Proveedora', 'Gráfica del Sur', 'Gráfica del Sur S.A. de C.V.', 'Av. Satelite calle vista hermosa, poligono #2', NULL, '2214-0404', NULL, 'ventas@graficadelsur.com', NULL, 2, '2026-06-10 11:33:18'),
+(5, NULL, 'Distribuidora', 'Vinilos y Más', 'Vinilos y Más S.A.', 'bulevard los proceres poligono c  #200', NULL, '2126-0512', NULL, 'pedidos@vinilosymas.com', NULL, 2, '2026-06-10 11:33:18'),
+(6, NULL, 'Suministros', 'Tinta y Color', 'Tinta y Color S.A.', 'Calle arturo Magaña 2 av norte, pje La Pradera', NULL, '2428-0606', NULL, 'ventas@tintaycolor.com', NULL, 2, '2026-06-10 11:33:18'),
+(7, NULL, 'Grupo', 'Acrílicos del Norte', 'Acrílicos del Norte S.A.', 'Av. Constitucion casa #33, Col. Moncalvo', NULL, '2559-0707', NULL, 'info@acrilicosnorte.com', NULL, 2, '2026-06-10 11:33:18'),
+(8, NULL, 'Comercial', 'LED y Letreros', 'LED y Letreros S.A.', 'Calle #2 29 avenida sur col escalón, Zona Industri', NULL, '2555-0808', NULL, 'ventas@ledletreros.com', NULL, 2, '2026-06-10 11:33:18');
 
 -- --------------------------------------------------------
 
@@ -241,7 +240,7 @@ INSERT INTO `product` (`id`, `image`, `barcode`, `name`, `description`, `inventa
 (27, NULL, 'MAT-026', 'Laca UV Brillante', 'Barniz UV brillante para acabado protector, galón 3.78L', 1, 450, 630, 'Galón', NULL, 1, NULL, '2026-06-10 11:33:18', 1, 1),
 (28, NULL, 'MAT-027', 'Cuchillas Plotter 45°', 'Cuchillas de corte 45° para plotter Graphtec/Roland, pack 10', 3, 15, 24, 'Caja', NULL, 1, NULL, '2026-06-10 11:33:18', 1, 1),
 (29, NULL, 'MAT-028', 'Spray Limpiador Cabezales', 'Spray 500ml para limpieza de cabezales impresora', 3, 25, 37.5, 'Unidad', NULL, 1, NULL, '2026-06-10 11:33:18', 1, 1),
-(30, NULL, 'MAT-029', 'Tubo Aluminio Redondo 1"', 'Tubo aluminio 1" diámetro x 3m, pared 1.5mm', 5, 35, 49, 'Unidad', NULL, 1, NULL, '2026-06-10 11:33:18', 1, 1),
+(30, NULL, 'MAT-029', 'Tubo Aluminio Redondo 1\"', 'Tubo aluminio 1\" diámetro x 3m, pared 1.5mm', 5, 35, 49, 'Unidad', NULL, 1, NULL, '2026-06-10 11:33:18', 1, 1),
 (31, NULL, 'MAT-030', 'LED Strip 5050 RGB', 'Tira LED 5050 RGB 5m, 12V, impermeable IP65', 3, 180, 252, 'Unidad', NULL, 1, NULL, '2026-06-10 11:33:18', 1, 1),
 (32, NULL, 'MAT-031', 'Fuente Poder 12V 10A', 'Fuente switching 12V 10A para tiras LED', 3, 35, 52.5, 'Unidad', NULL, 1, NULL, '2026-06-10 11:33:18', 1, 1),
 (33, NULL, 'MAT-032', 'Perfil Aluminio LED 2m', 'Perfil aluminio empotrar 2m para tira LED, con difusor', 5, 25, 37.5, 'Unidad', NULL, 1, NULL, '2026-06-10 11:33:18', 1, 1),
@@ -311,10 +310,10 @@ CREATE TABLE `sell` (
 -- Volcado de datos para la tabla `sell`
 --
 
-INSERT INTO `sell` (`id`, `person_id`, `user_id`, `operation_type_id`, `total`, `cash`, `discount`, `estado_produccion`, `prioridad`, `fecha_entrega`, `diseno_url`, `created_at`) VALUES
-(1, 1, 1, 2, 4450, 4450, 0, 'Pendiente', 'Alta', '2026-06-14', 'https://drive.google.com/drive/folders/1abc-menu-parrilla', '2026-06-11 09:30:00'),
-(2, 2, 1, 2, 1480, 1480, 0, 'En Prensa', 'Media', '2026-06-18', 'https://drive.google.com/drive/folders/2def-eleganza-brand', '2026-06-11 09:35:00'),
-(3, 3, 1, 2, 4800, 4800, 0, 'Pendiente', 'Baja', '2026-06-25', 'https://drive.google.com/drive/folders/3ghi-techsolutions-logo', '2026-06-11 09:40:00');
+INSERT INTO `sell` (`id`, `person_id`, `user_id`, `operation_type_id`, `box_id`, `total`, `cash`, `discount`, `estado_produccion`, `prioridad`, `fecha_entrega`, `diseno_url`, `created_at`) VALUES
+(1, 1, 1, 2, NULL, 4450, 4450, 0, 'Pendiente', 'Alta', '2026-06-14', 'https://drive.google.com/drive/folders/1abc-menu-parrilla', '2026-06-11 09:30:00'),
+(2, 2, 1, 2, NULL, 1480, 1480, 0, 'En Prensa', 'Media', '2026-06-18', 'https://drive.google.com/drive/folders/2def-eleganza-brand', '2026-06-11 09:35:00'),
+(3, 3, 1, 2, NULL, 4800, 4800, 0, 'Pendiente', 'Baja', '2026-06-25', 'https://drive.google.com/drive/folders/3ghi-techsolutions-logo', '2026-06-11 09:40:00');
 
 -- --------------------------------------------------------
 
