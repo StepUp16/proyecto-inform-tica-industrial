@@ -118,7 +118,15 @@ INSERT INTO `operation` (`id`, `product_id`, `q`, `operation_type_id`, `sell_id`
 (47, 48, 0, 1, NULL, '2026-06-10 11:33:18'),
 (48, 49, 0, 1, NULL, '2026-06-10 11:33:18'),
 (49, 50, 0, 1, NULL, '2026-06-10 11:33:18'),
-(50, 51, 0, 1, NULL, '2026-06-10 11:33:18');
+(50, 51, 0, 1, NULL, '2026-06-10 11:33:18'),
+(51, 37, 5, 2, 1, '2026-06-11 09:30:00'),
+(52, 36, 10, 2, 1, '2026-06-11 09:30:00'),
+(53, 40, 1, 2, 2, '2026-06-11 09:35:00'),
+(54, 41, 1, 2, 2, '2026-06-11 09:35:00'),
+(55, 38, 3, 2, 2, '2026-06-11 09:35:00'),
+(56, 44, 1, 2, 3, '2026-06-11 09:40:00'),
+(57, 43, 2, 2, 3, '2026-06-11 09:40:00'),
+(58, 46, 10, 2, 3, '2026-06-11 09:40:00');
 
 -- --------------------------------------------------------
 
@@ -160,6 +168,15 @@ CREATE TABLE `person` (
   `kind` int(11) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `person`
+--
+
+INSERT INTO `person` (`id`, `image`, `name`, `lastname`, `company`, `address1`, `phone1`, `email1`, `kind`, `created_at`) VALUES
+(1, NULL, 'Carlos', 'Mendoza', 'Restaurante La Parrilla', 'Av. Principal 123, Centro', '555-0101', 'carlos@laparrilla.com', 1, '2026-06-10 11:33:18'),
+(2, NULL, 'María Fernanda', 'López', 'Boutique Eleganza', 'Calle Real 456, Plaza Mayor', '555-0202', 'maria@eleganza.com', 1, '2026-06-10 11:33:18'),
+(3, NULL, 'Roberto', 'García', 'TechSolutions S.A.', 'Blvd. Tecnológico 789, Of. 301', '555-0303', 'roberto@techsolutions.com', 1, '2026-06-10 11:33:18');
 
 -- --------------------------------------------------------
 
@@ -285,6 +302,15 @@ CREATE TABLE `sell` (
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `sell`
+--
+
+INSERT INTO `sell` (`id`, `person_id`, `user_id`, `operation_type_id`, `total`, `cash`, `discount`, `estado_produccion`, `prioridad`, `fecha_entrega`, `diseno_url`, `created_at`) VALUES
+(1, 1, 1, 2, 4450, 4450, 0, 'Pendiente', 'Alta', '2026-06-14', 'https://drive.google.com/drive/folders/1abc-menu-parrilla', '2026-06-11 09:30:00'),
+(2, 2, 1, 2, 1480, 1480, 0, 'En Prensa', 'Media', '2026-06-18', 'https://drive.google.com/drive/folders/2def-eleganza-brand', '2026-06-11 09:35:00'),
+(3, 3, 1, 2, 4800, 4800, 0, 'Pendiente', 'Baja', '2026-06-25', 'https://drive.google.com/drive/folders/3ghi-techsolutions-logo', '2026-06-11 09:40:00');
+
 -- --------------------------------------------------------
 
 --
@@ -399,7 +425,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT de la tabla `operation`
 --
 ALTER TABLE `operation`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT de la tabla `operation_type`
@@ -411,7 +437,7 @@ ALTER TABLE `operation_type`
 -- AUTO_INCREMENT de la tabla `person`
 --
 ALTER TABLE `person`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `product`
@@ -429,7 +455,7 @@ ALTER TABLE `product_recipe`
 -- AUTO_INCREMENT de la tabla `sell`
 --
 ALTER TABLE `sell`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `user`
