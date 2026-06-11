@@ -55,7 +55,3 @@ Requiere Apache + PHP + MySQL (XAMPP o LAMPP recomendado).
    - **Contraseña:** admin
 
 > El archivo `schema.sql` incluye la estructura completa de la base de datos, un inventario inicial realista para una empresa de publicidad (34 materias primas, 17 productos terminados), 3 órdenes de producción de ejemplo, 3 clientes y 5 proveedores.
-
-## Créditos
-
-Basado en Inventio Lite v4 por evilnapsis. Adaptado y extendido para gestión de producción publicitaria.
