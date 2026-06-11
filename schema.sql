@@ -176,7 +176,12 @@ CREATE TABLE `person` (
 INSERT INTO `person` (`id`, `image`, `name`, `lastname`, `company`, `address1`, `phone1`, `email1`, `kind`, `created_at`) VALUES
 (1, NULL, 'Carlos', 'Mendoza', 'Restaurante La Parrilla', 'Av. Principal 123, Centro', '555-0101', 'carlos@laparrilla.com', 1, '2026-06-10 11:33:18'),
 (2, NULL, 'María Fernanda', 'López', 'Boutique Eleganza', 'Calle Real 456, Plaza Mayor', '555-0202', 'maria@eleganza.com', 1, '2026-06-10 11:33:18'),
-(3, NULL, 'Roberto', 'García', 'TechSolutions S.A.', 'Blvd. Tecnológico 789, Of. 301', '555-0303', 'roberto@techsolutions.com', 1, '2026-06-10 11:33:18');
+(3, NULL, 'Roberto', 'García', 'TechSolutions S.A.', 'Blvd. Tecnológico 789, Of. 301', '555-0303', 'roberto@techsolutions.com', 1, '2026-06-10 11:33:18'),
+(4, NULL, 'Proveedora', 'Gráfica del Sur', 'Gráfica del Sur S.A. de C.V.', 'Av. Industrias 500, Zona Industrial', '555-0404', 'ventas@graficadelsur.com', 2, '2026-06-10 11:33:18'),
+(5, NULL, 'Distribuidora', 'Vinilos y Más', 'Vinilos y Más S.A.', 'Calle del Plástico 200, Col. Industrial', '555-0505', 'pedidos@vinilosymas.com', 2, '2026-06-10 11:33:18'),
+(6, NULL, 'Suministros', 'Tinta y Color', 'Tinta y Color S.A.', 'Blvd. Químico 345, Parque Industrial', '555-0606', 'ventas@tintaycolor.com', 2, '2026-06-10 11:33:18'),
+(7, NULL, 'Grupo', 'Acrílicos del Norte', 'Acrílicos del Norte S.A.', 'Av. del Vidrio 678, Col. Industrial', '555-0707', 'info@acrilicosnorte.com', 2, '2026-06-10 11:33:18'),
+(8, NULL, 'Comercial', 'LED y Letreros', 'LED y Letreros S.A.', 'Calle Eléctrica 123, Zona Industrial', '555-0808', 'ventas@ledletreros.com', 2, '2026-06-10 11:33:18');
 
 -- --------------------------------------------------------
 
@@ -437,7 +442,7 @@ ALTER TABLE `operation_type`
 -- AUTO_INCREMENT de la tabla `person`
 --
 ALTER TABLE `person`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `product`
