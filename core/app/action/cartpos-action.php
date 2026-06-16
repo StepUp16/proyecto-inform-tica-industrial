@@ -117,6 +117,12 @@ $cart = isset($_SESSION["cart"]) ? $_SESSION["cart"] : array();
         return false;
     }
 
+    if(!diseno || diseno.trim() === ""){
+        Swal.fire('Falta el Diseño', 'Debe adjuntar el enlace del Diseño Aprobado antes de enviar la orden a producción.', 'warning');
+        $("#prod_diseno_url").focus();
+        return false;
+    }
+
     // Pasamos los valores visuales a los inputs ocultos de este formulario
     $("#hidden_prioridad").val(prio);
     $("#hidden_fecha_entrega").val(fecha);

@@ -76,6 +76,111 @@ if($product!=null):
         </form>
       </div>
     </div>
+
+    <!-- Motor de Costos — solo visible para Productos Terminados -->
+    <?php if($product->es_materia_prima == 0): ?>
+    <div class="card shadow-sm border-info mt-4">
+      <div class="card-header bg-info text-white fw-bold">
+        <i class="bi bi-calculator"></i> Motor de Costos — Calcular Precio de Venta
+      </div>
+      <div class="card-body bg-light">
+        <p class="text-muted small mb-3">
+          Calcula el precio de venta sugerido sumando el costo de los insumos de la receta, la mano de obra y el margen de ganancia deseado.
+          Requiere que el producto tenga una <a href="index.php?view=b&id=<?php echo $product->id; ?>">receta (BOM)</a> configurada.
+        </p>
+
+        <div id="motor-costos-resultado" class="mb-3"></div>
+
+        <div class="row g-3 align-items-end">
+          <div class="col-md-3">
+            <label class="form-label fw-bold small">Mano de Obra ($)</label>
+            <input type="number" id="mc_labor" step="0.01" min="0" value="0" class="form-control border-secondary" placeholder="Ej: 2.50">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label fw-bold small">Margen de Ganancia (%)</label>
+            <input type="number" id="mc_margin" step="1" min="0" value="30" class="form-control border-secondary" placeholder="Ej: 30">
+          </div>
+          <div class="col-md-3">
+            <button type="button" id="btn_calcular" class="btn btn-info text-white w-100 fw-bold">
+              <i class="bi bi-calculator-fill"></i> Calcular
+            </button>
+          </div>
+          <div class="col-md-3">
+            <button type="button" id="btn_aplicar" class="btn btn-success w-100 fw-bold d-none">
+              <i class="bi bi-check-circle"></i> Aplicar al formulario
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <?php endif; ?>
+
   </div>
 </div>
+
+<?php if($product->es_materia_prima == 0): ?>
+<script>
+(function(){
+  var productId = <?php echo intval($product->id); ?>;
+  var suggestedPrice = 0;
+
+  $("#btn_calcular").on("click", function(){
+    $.get("./?action=calculatecost", { product_id: productId }, function(data){
+      var res = typeof data === "string" ? JSON.parse(data) : data;
+
+      if(res.error || res.ingredients.length === 0){
+        $("#motor-costos-resultado").html(
+          '<div class="alert alert-warning"><i class="bi bi-exclamation-triangle"></i> Este producto no tiene receta configurada. ' +
+          '<a href="index.php?view=b&id=' + productId + '">Agregar receta</a></div>'
+        );
+        $("#btn_aplicar").addClass("d-none");
+        return;
+      }
+
+      var labor  = parseFloat($("#mc_labor").val())  || 0;
+      var margin = parseFloat($("#mc_margin").val()) || 0;
+
+      var costMaterials = parseFloat(res.total_cost);
+      var costTotal     = costMaterials + labor;
+      suggestedPrice    = costTotal * (1 + margin / 100);
+
+      var rows = "";
+      res.ingredients.forEach(function(ing){
+        rows += "<tr>" +
+          "<td>" + ing.name + "</td>" +
+          "<td class='text-center'>" + parseFloat(ing.quantity_to_discount) + " " + ing.unit + "</td>" +
+          "<td class='text-end'>$ " + parseFloat(ing.price_in).toFixed(4) + "</td>" +
+          "<td class='text-end fw-bold'>$ " + parseFloat(ing.subtotal).toFixed(4) + "</td>" +
+          "</tr>";
+      });
+
+      var html = '<table class="table table-sm table-bordered mb-2">' +
+        '<thead class="bg-light"><tr><th>Insumo</th><th class="text-center">Cantidad</th><th class="text-end">Costo Unit.</th><th class="text-end">Subtotal</th></tr></thead>' +
+        '<tbody>' + rows + '</tbody>' +
+        '<tfoot class="bg-light fw-bold">' +
+          '<tr><td colspan="3" class="text-end text-danger">Costo Materiales</td><td class="text-end text-danger">$ ' + costMaterials.toFixed(2) + '</td></tr>' +
+          '<tr><td colspan="3" class="text-end text-secondary">Mano de Obra</td><td class="text-end text-secondary">$ ' + labor.toFixed(2) + '</td></tr>' +
+          '<tr><td colspan="3" class="text-end text-dark">Costo Total</td><td class="text-end text-dark">$ ' + costTotal.toFixed(2) + '</td></tr>' +
+          '<tr class="table-success"><td colspan="3" class="text-end text-success">Precio Sugerido (+ ' + margin + '% margen)</td><td class="text-end text-success fs-5">$ ' + suggestedPrice.toFixed(2) + '</td></tr>' +
+        '</tfoot>' +
+        '</table>';
+
+      $("#motor-costos-resultado").html(html);
+      $("#btn_aplicar").removeClass("d-none");
+    });
+  });
+
+  $("#btn_aplicar").on("click", function(){
+    $("input[name='price_out']").val(suggestedPrice.toFixed(2));
+    Swal.fire({
+      icon: "success",
+      title: "Precio aplicado",
+      text: "El precio de venta fue actualizado a $ " + suggestedPrice.toFixed(2) + ". Guarda el formulario para confirmar el cambio.",
+      timer: 3000,
+      showConfirmButton: false
+    });
+  });
+})();
+</script>
+<?php endif; ?>
 <?php endif; ?>
